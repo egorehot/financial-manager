@@ -1,0 +1,16 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry]
+name = "financial-manager"
+version = "0.1.0"
+description = ""
+authors = ["egorehot"]
+readme = "README.md"
+package-mode = false
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
