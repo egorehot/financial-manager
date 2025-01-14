@@ -1,12 +1,16 @@
+from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Protocol, Sequence
 
-from finman.domain.entities import Transaction, TransactionType, Category, User
+from finman.domain.entities import Category, Transaction, TransactionType, User
 
 
-class TransactionsRepository(Protocol):
-    async def save(self, transaction: Transaction) -> None: ...
+class TransactionsRepository(ABC):
+    @abstractmethod
+    async def save(self, transaction: Transaction) -> None:
+        raise NotImplementedError
 
+    @abstractmethod
     async def get_transactions(
             self,
             date_from: datetime | None = None,
@@ -14,8 +18,17 @@ class TransactionsRepository(Protocol):
             type_: TransactionType | None = None,
             category: Category | None = None,
             transactor: User | None = None,
-    ) -> Sequence[Transaction]: ...
+    ) -> Sequence[Transaction]:
+        raise NotImplementedError
 
-    async def get_by_id(self, transaction_id: int) -> Transaction: ...
+    @abstractmethod
+    async def get_by_id(self, transaction_id: int) -> Transaction:
+        raise NotImplementedError
 
-    async def update(self, transaction: Transaction) -> None: ...
+    @abstractmethod
+    async def update(self, transaction: Transaction) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete(self, transaction_id: int) -> None:
+        raise NotImplementedError
