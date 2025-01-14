@@ -72,6 +72,9 @@ select = [
   "YTT",  # flake8-2020
 ]
 
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+
 
 [tool.ruff.format]
 quote-style = "double"
