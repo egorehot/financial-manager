@@ -14,10 +14,28 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
+pydantic = "^2.10.5"
+pydantic-extra-types = "^2.10.2"
+pycountry = "^24.6.1"
 
 [tool.poetry.group.lint.dependencies]
 ruff = "^0.9.1"
 mypy = "^1.14.1"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.2"
+
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s %(levelname)s %(name)s: %(message)s"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
 
 [tool.ruff]
@@ -28,7 +46,7 @@ exclude = [
     ".pytest_cache",
     ".ruff_cache",
 ]
-line-length = 80
+line-length = 79
 indent-width = 4
 
 target-version = "py312"

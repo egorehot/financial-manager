@@ -2,12 +2,14 @@ from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from datetime import datetime
 
-from finman.domain.entities import Category, Transaction, TransactionType, User
+from finman.domain.entities import (
+    Category, Transaction, TransactionType, Transactor,
+)
 
 
 class TransactionsRepository(ABC):
     @abstractmethod
-    async def save(self, transaction: Transaction) -> None:
+    async def save(self, transaction: Transaction) -> int:
         raise NotImplementedError
 
     @abstractmethod
@@ -17,7 +19,7 @@ class TransactionsRepository(ABC):
             date_to: datetime | None = None,
             type_: TransactionType | None = None,
             category: Category | None = None,
-            transactor: User | None = None,
+            transactor: Transactor | None = None,
     ) -> Sequence[Transaction]:
         raise NotImplementedError
 
