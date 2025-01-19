@@ -3,7 +3,10 @@ from collections.abc import Sequence
 from datetime import datetime
 
 from finman.domain.entities import (
-    Category, Transaction, TransactionType, Transactor,
+    Category,
+    Transaction,
+    TransactionType,
+    Transactor,
 )
 
 
@@ -13,18 +16,19 @@ class TransactionsRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_transactions(
+    async def get_transactions(  # noqa: PLR0913
             self,
             date_from: datetime | None = None,
             date_to: datetime | None = None,
-            type_: TransactionType | None = None,
-            category: Category | None = None,
-            transactor: Transactor | None = None,
-    ) -> Sequence[Transaction]:
+            types: list[TransactionType] | None = None,
+            categories: list[Category] | None = None,
+            transactors: list[Transactor] | None = None,
+            limit: int = 100,
+    ) -> Sequence[Transaction | None]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, transaction_id: int) -> Transaction:
+    async def get_by_id(self, transaction_id: int) -> Transaction | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -33,4 +37,12 @@ class TransactionsRepository(ABC):
 
     @abstractmethod
     async def delete(self, transaction_id: int) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_transactors(self) -> Sequence[Transactor]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_categories(self) -> Sequence[Category]:
         raise NotImplementedError

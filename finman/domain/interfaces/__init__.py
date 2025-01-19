@@ -1,5 +1,4 @@
-__all__ = ("TransactionsRepository", "UoW")
+__all__ = ("TransactionsRepository",)
 
 
 from .transactions_repository import TransactionsRepository
-from finman.application.uow import UoW

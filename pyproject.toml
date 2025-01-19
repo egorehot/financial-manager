@@ -90,6 +90,10 @@ select = [
   "YTT",  # flake8-2020
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/tests/*" = ["S101"]
+
 [tool.ruff.lint.isort]
 lines-after-imports = 2
 

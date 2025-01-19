@@ -1,7 +1,9 @@
-from dataclasses import dataclass, fields, is_dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Literal, Optional
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, PositiveFloat
+from pydantic_extra_types.currency_code import Currency
 
 
 class TransactionType(Enum):
@@ -9,39 +11,21 @@ class TransactionType(Enum):
     INCOME = 2
 
 
-@dataclass
-class Transaction:
-    type: TransactionType
+class Transaction(BaseModel):
     date: datetime
+    type: TransactionType
     transactor: "Transactor"
     category: "Category"
-    amount: float
-    currency: "Currency"
+    amount: PositiveFloat
+    currency: Currency
 
-    @classmethod
-    def from_object(cls, data: Any) -> "Transaction":
-        kwargs = {}
-        for field in fields(cls):
-            value = getattr(data, field.name, None)
-            if is_dataclass(field.type):
-                value = field.type(name=value)
-            elif isinstance(field.type, type) and issubclass(field.type, Enum):
-                value = field.type[value.upper()]
-            kwargs[field.name] = value
-        return cls(**kwargs)
+    model_config = ConfigDict(from_attributes=True)
 
 
-@dataclass
-class Transactor:
+class Transactor(BaseModel):
     name: str
 
 
-@dataclass
-class Category:
+class Category(BaseModel):
     name: str
     parent: Optional["Category"] = None
-
-
-@dataclass
-class Currency:
-    name: Literal["USD", "EUR", "RUB"]
