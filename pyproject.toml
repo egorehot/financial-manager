@@ -92,7 +92,7 @@ select = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]
-"**/tests/*" = ["S101"]
+"**/tests/*" = ["S101", "DTZ001", "PLR2004"]
 
 [tool.ruff.lint.isort]
 lines-after-imports = 2

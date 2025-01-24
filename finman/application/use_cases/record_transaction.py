@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from finman.application.base_use_case import UseCase
@@ -26,9 +27,12 @@ class RecordTransactionUC(UseCase[NewTransaction, int]):
 
     async def __call__(self, data: NewTransaction) -> int:
         """Receives a transaction to save, returns its identifier"""
-        transactor = await self.validate_transactor(data.transactor)
-        category = await self.validate_category(data.category)
-        transaction_type = TransactionType[data.type.upper()]
+        tasks = (
+            self.validate_transactor(data.transactor),
+            self.validate_category(data.category),
+        )
+        transactor, category = await asyncio.gather(*tasks)
+        transaction_type = TransactionType(data.type.lower())
         transaction = Transaction(
             date=data.date,
             type=transaction_type,

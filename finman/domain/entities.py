@@ -7,8 +7,8 @@ from pydantic_extra_types.currency_code import Currency
 
 
 class TransactionType(Enum):
-    EXPENSE = 1
-    INCOME = 2
+    EXPENSE = "expense"
+    INCOME = "income"
 
 
 class Transaction(BaseModel):
@@ -18,6 +18,9 @@ class Transaction(BaseModel):
     category: "Category"
     amount: PositiveFloat
     currency: Currency
+    id: int | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

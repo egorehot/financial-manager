@@ -12,5 +12,5 @@ def uow():
 
 
 @pytest.fixture
-def transaction_repo():
+def transactions_repo():
     return Mock(spec=TransactionsRepository)

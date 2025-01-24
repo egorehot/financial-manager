@@ -24,7 +24,7 @@ class TransactionsRepository(ABC):
             categories: list[Category] | None = None,
             transactors: list[Transactor] | None = None,
             limit: int = 100,
-    ) -> Sequence[Transaction | None]:
+    ) -> Sequence[Transaction]:
         raise NotImplementedError
 
     @abstractmethod
