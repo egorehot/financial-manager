@@ -12,7 +12,7 @@ authors = [
   {name = "Egor D", email = "d9d9.goga@gmail.com"},
 ]
 readme = "README.md"
-license = "AGPL-3.0-or-later"
+license = {text = "AGPL-3.0-or-later"}
 
 
 [tool.poetry]
