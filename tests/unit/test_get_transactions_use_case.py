@@ -2,20 +2,20 @@ from datetime import datetime
 
 import pytest
 
+from finman.application.dtos import TransactionResponse, TransactionsFilter
 from finman.application.exceptions import IncorrectFilterDatesError
-from finman.application.use_cases import GetTransactionsUC
+from finman.application.use_cases import GetTransactions
 from finman.domain.entities import (
     Category,
     Transaction,
     TransactionType,
     Transactor,
 )
-from finman.presentation.schemas import TransactionResponse, TransactionsFilter
 
 
 @pytest.fixture
 def get_transactions_uc(uow, transactions_repo):
-    return GetTransactionsUC(uow=uow, transactions_repo=transactions_repo)
+    return GetTransactions(uow=uow, transactions_repo=transactions_repo)
 
 
 async def test_get_transactions_no_filters(

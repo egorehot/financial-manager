@@ -2,22 +2,22 @@ import logging
 from datetime import datetime
 
 from finman.application.base_use_case import UseCase
+from finman.application.dtos import TransactionResponse, TransactionsFilter
 from finman.application.exceptions import IncorrectFilterDatesError
 from finman.application.uow import UoW
+from finman.application.utils import convert_transaction_to_response
 from finman.domain.entities import (
     Category,
-    Transaction,
     TransactionType,
     Transactor,
 )
 from finman.domain.interfaces import TransactionsRepository
-from finman.presentation.schemas import TransactionResponse, TransactionsFilter
 
 
 log = logging.getLogger(__name__)
 
 
-class GetTransactionsUC(
+class GetTransactions(
     UseCase[TransactionsFilter, list[TransactionResponse]],
 ):
     def __init__(self, uow: UoW, transactions_repo: TransactionsRepository):
@@ -46,7 +46,7 @@ class GetTransactionsUC(
             limit=data.limit,  # TODO add pagination
         )
         log.info("Got %s transactions", len(transactions))
-        return [self.convert_transaction_to_response(transaction)
+        return [convert_transaction_to_response(transaction)
                 for transaction in transactions]
 
     @staticmethod
@@ -58,11 +58,4 @@ class GetTransactionsUC(
             raise IncorrectFilterDatesError(date_from, date_to)
         return date_from, date_to
 
-    @staticmethod
-    def convert_transaction_to_response(
-            transaction: Transaction,
-    ) -> TransactionResponse:
-        data = transaction.model_dump(mode="json")
-        data["transactor"] = data["transactor"].get("name")
-        data["category"] = data["category"].get("name")
-        return TransactionResponse(**data)
+

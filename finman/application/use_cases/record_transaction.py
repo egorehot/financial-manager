@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from finman.application.base_use_case import UseCase
+from finman.application.dtos import NewTransaction
 from finman.application.exceptions import (
     CategoryNotFoundError,
     TransactorNotFoundError,
@@ -14,13 +15,12 @@ from finman.domain.entities import (
     Transactor,
 )
 from finman.domain.interfaces import TransactionsRepository
-from finman.presentation.schemas import NewTransaction
 
 
 log = logging.getLogger(__name__)
 
 
-class RecordTransactionUC(UseCase[NewTransaction, int]):
+class RecordTransaction(UseCase[NewTransaction, int]):
     def __init__(self, uow: UoW, transactions_repo: TransactionsRepository):
         self.uow = uow
         self.transactions_repo = transactions_repo

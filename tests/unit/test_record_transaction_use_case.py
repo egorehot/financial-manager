@@ -1,12 +1,12 @@
 import pytest
 
+from finman.application.dtos import NewTransaction
 from finman.application.exceptions import (
     CategoryNotFoundError,
     TransactorNotFoundError,
 )
-from finman.application.use_cases import RecordTransactionUC
+from finman.application.use_cases import RecordTransaction
 from finman.domain.entities import Category, Transactor
-from finman.presentation.schemas import NewTransaction
 
 
 @pytest.fixture
@@ -23,7 +23,7 @@ def new_transaction():
 
 @pytest.fixture
 def record_transaction_uc(uow, transactions_repo):
-    return RecordTransactionUC(uow=uow, transactions_repo=transactions_repo)
+    return RecordTransaction(uow=uow, transactions_repo=transactions_repo)
 
 
 async def test_validate_transactor(record_transaction_uc, transactions_repo):
