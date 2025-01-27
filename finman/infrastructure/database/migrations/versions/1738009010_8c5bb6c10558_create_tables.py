@@ -1,8 +1,8 @@
 """create tables
 
-Revision ID: 8831d56a4912
+Revision ID: 8c5bb6c10558
 Revises:
-Create Date: 2025-01-25 17:54:08.231341
+Create Date: 2025-01-27 22:16:50.763424
 
 """
 
@@ -11,7 +11,7 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision = "8831d56a4912"
+revision = "8c5bb6c10558"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,7 @@ def upgrade() -> None:
         "categories",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
+        sa.Column("parent_id", sa.Integer(), nullable=True),
         sa.Column(
             "created_at",
             sa.Integer(),
@@ -34,6 +35,10 @@ def upgrade() -> None:
             sa.Integer(),
             server_default=sa.text("(CURRENT_TIMESTAMP)"),
             nullable=False,
+        ),
+        sa.ForeignKeyConstraint(
+            ["parent_id"],
+            ["categories.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
@@ -59,13 +64,13 @@ def upgrade() -> None:
     )
     op.create_table(
         "transactions",
+        sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("date", sa.Integer(), nullable=False),
         sa.Column("type", sa.String(), nullable=False),
         sa.Column("amount", sa.Float(), nullable=False),
         sa.Column("currency", sa.String(), nullable=False),
         sa.Column("transactor_id", sa.Integer(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
             "created_at",
             sa.Integer(),

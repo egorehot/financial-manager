@@ -10,7 +10,7 @@ class Base(DeclarativeBase):
     created_at: Mapped[int] = mapped_column(server_default=func.now())
     updated_at: Mapped[int] = mapped_column(server_default=func.now())
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # TODO add all column attrs
         return (f"<{self.__class__.__name__}: id={self.id}, "
                 f"created_at={self.created_at}, updated_at={self.updated_at}>")
 
@@ -39,3 +39,9 @@ class Category(Base):
     __tablename__ = "categories"
 
     name: Mapped[str] = mapped_column(unique=True)
+    parent_id: Mapped[int | None] = mapped_column(ForeignKey("categories.id"))
+
+    parent: Mapped["Category"] = relationship(
+        "Category",
+        remote_side="Category.id",
+    )
