@@ -1,38 +1,35 @@
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from datetime import datetime
 
 from finman.domain.entities import (
-    Category,
-    Transaction,
-    TransactionType,
-    Transactor,
+    NewTransaction,
+    TransactionResponse,
+    TransactionsFilter,
 )
 
 
 class TransactionsRepository(ABC):
     @abstractmethod
-    async def save(self, transaction: Transaction) -> int:
+    async def save(self, transaction: NewTransaction) -> int:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_transactions(  # noqa: PLR0913
+    async def get_transactions(
             self,
-            date_from: datetime | None = None,
-            date_to: datetime | None = None,
-            types: list[TransactionType] | None = None,
-            categories: list[Category] | None = None,
-            transactors: list[Transactor] | None = None,
-            limit: int = 100,
-    ) -> Sequence[Transaction]:
+            filters: TransactionsFilter,
+    ) -> Sequence[TransactionResponse]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, transaction_id: int) -> Transaction | None:
+    async def get_by_id(self, transaction_id: int) -> TransactionResponse:
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, transaction: Transaction) -> None:
+    async def update(
+            self,
+            transaction_id: int,
+            transaction: NewTransaction,
+    ) -> None:
         raise NotImplementedError
 
     @abstractmethod
@@ -40,9 +37,9 @@ class TransactionsRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_transactors(self) -> Sequence[Transactor]:
+    async def get_transactors(self) -> Sequence[str]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_categories(self) -> Sequence[Category]:
+    async def get_categories(self) -> Sequence[str]:
         raise NotImplementedError

@@ -1,12 +1,11 @@
 import pytest
 
-from finman.application.dtos import NewTransaction
 from finman.application.exceptions import (
     CategoryNotFoundError,
     TransactorNotFoundError,
 )
 from finman.application.use_cases import RecordTransaction
-from finman.domain.entities import Category, Transactor
+from finman.domain.entities import NewTransaction
 
 
 @pytest.fixture
@@ -17,7 +16,7 @@ def new_transaction():
         "currency": "EUR",
         "category": "Test",
         "transactor": "Joe Doe",
-        "type": "expense",
+        "type": 1,
     })
 
 
@@ -27,7 +26,7 @@ def record_transaction_uc(uow, transactions_repo):
 
 
 async def test_validate_transactor(record_transaction_uc, transactions_repo):
-    known_transactor = Transactor(name="Test")
+    known_transactor = "Test"
     transactions_repo.get_transactors.return_value = [known_transactor]
 
     transactor = await record_transaction_uc.validate_transactor("Test")
@@ -46,7 +45,7 @@ async def test_validate_unknown_transactor(
 
 
 async def test_validate_category(record_transaction_uc, transactions_repo):
-    known_category = Category(name="Test")
+    known_category = "Test"
     transactions_repo.get_categories.return_value = [known_category]
 
     category = await record_transaction_uc.validate_category("Test")
@@ -68,10 +67,8 @@ async def test_record_transaction(
         record_transaction_uc, transactions_repo, new_transaction,
 ):
     transactions_repo.save.return_value = 1
-    transactions_repo.get_transactors.return_value = [
-        Transactor(name="Joe Doe"),
-    ]
-    transactions_repo.get_categories.return_value = [Category(name="Test")]
+    transactions_repo.get_transactors.return_value = ["Joe Doe"]
+    transactions_repo.get_categories.return_value = ["Test"]
 
     transaction_id = await record_transaction_uc(new_transaction)
 

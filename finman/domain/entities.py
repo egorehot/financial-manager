@@ -1,34 +1,51 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Self
 
-from pydantic import BaseModel, ConfigDict, PositiveFloat
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    PositiveFloat,
+    model_validator,
+)
 from pydantic_extra_types.currency_code import Currency
+
+from finman.application.exceptions import IncorrectFilterDatesError
 
 
 class TransactionType(Enum):
-    EXPENSE = "expense"
-    INCOME = "income"
+    EXPENSE = 1
+    INCOME = 2
 
 
-class Transaction(BaseModel):
+class NewTransaction(BaseModel):
     date: datetime
-    type: TransactionType
-    transactor: "Transactor"
-    category: "Category"
     amount: PositiveFloat
     currency: Currency
-    id: int | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    category: str
+    transactor: str
+    type: TransactionType
+
+
+class TransactionResponse(NewTransaction):
+    id: int
+    created_at: datetime
+    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class Transactor(BaseModel):
-    name: str
+class TransactionsFilter(BaseModel):
+    date_from: datetime | None = None
+    date_to: datetime | None = None
+    types: list[TransactionType] | None = None
+    transactors: list[str] | None = None
+    categories: list[str] | None = None
+    limit: int = Field(default=100, gt=0, le=1000)
 
-
-class Category(BaseModel):
-    name: str
-    parent: Optional["Category"] = None
+    @model_validator(mode="after")
+    def validate_dates(self) -> Self:
+        if self.date_from and self.date_to and self.date_from > self.date_to:
+            raise IncorrectFilterDatesError(self.date_from, self.date_to)
+        return self

@@ -1,6 +1,11 @@
 from datetime import datetime
 
 
+class TransactionNotFoundError(ValueError):
+    def __init__(self, transaction_id: int):
+        super().__init__(f"Transaction with id={transaction_id!s} not found")
+
+
 class TransactorNotFoundError(ValueError):
     def __init__(self, transactor_name: str):
         super().__init__(f"Transactor '{transactor_name!s}' not found")

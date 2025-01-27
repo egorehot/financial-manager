@@ -2,18 +2,12 @@ import asyncio
 import logging
 
 from finman.application.base_use_case import UseCase
-from finman.application.dtos import NewTransaction
 from finman.application.exceptions import (
     CategoryNotFoundError,
     TransactorNotFoundError,
 )
 from finman.application.uow import UoW
-from finman.domain.entities import (
-    Category,
-    Transaction,
-    TransactionType,
-    Transactor,
-)
+from finman.domain.entities import NewTransaction
 from finman.domain.interfaces import TransactionsRepository
 
 
@@ -27,37 +21,29 @@ class RecordTransaction(UseCase[NewTransaction, int]):
 
     async def __call__(self, data: NewTransaction) -> int:
         """Receives a transaction to save, returns its identifier"""
-        tasks = (
+        log.debug("Received new transaction: %s", repr(data))
+        transactor, category = await asyncio.gather(
+            *(
             self.validate_transactor(data.transactor),
             self.validate_category(data.category),
+            ),
         )
-        transactor, category = await asyncio.gather(*tasks)
-        transaction_type = TransactionType(data.type.lower())
-        transaction = Transaction(
-            date=data.date,
-            type=transaction_type,
-            transactor=transactor,
-            category=category,
-            amount=data.amount,
-            currency=data.currency,
-        )
-        log.debug("Received new transaction: %s", repr(transaction))
-        transaction_id = await self.transactions_repo.save(transaction)
+        data.transactor = transactor
+        data.category = category
+        transaction_id = await self.transactions_repo.save(data)
         await self.uow.commit()
         return transaction_id
 
-    async def validate_transactor(self, transactor_name: str) -> Transactor:
+    async def validate_transactor(self, transactor_name: str) -> str:
         transactors = await self.transactions_repo.get_transactors()
         for transactor in transactors:
-            if transactor.name == transactor_name:
+            if transactor == transactor_name.strip().lower().title():
                 return transactor
         raise TransactorNotFoundError(transactor_name)
 
-    async def validate_category(self, category_name: str) -> Category:
+    async def validate_category(self, category_name: str) -> str:
         categories = await self.transactions_repo.get_categories()
         for category in categories:
-            if category.name == category_name:
-                if not category.parent:
-                    log.warning("Got top level category %s", repr(category))
+            if category == category_name:
                 return category
         raise CategoryNotFoundError(category_name)
