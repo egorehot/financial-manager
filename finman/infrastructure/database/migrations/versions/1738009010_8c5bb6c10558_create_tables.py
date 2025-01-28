@@ -66,7 +66,7 @@ def upgrade() -> None:
         "transactions",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("date", sa.Integer(), nullable=False),
-        sa.Column("type", sa.String(), nullable=False),
+        sa.Column("type", sa.Integer(), nullable=False),
         sa.Column("amount", sa.Float(), nullable=False),
         sa.Column("currency", sa.String(), nullable=False),
         sa.Column("transactor_id", sa.Integer(), nullable=False),

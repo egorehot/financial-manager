@@ -19,7 +19,7 @@ class Transaction(Base):
     __tablename__ = "transactions"
 
     date: Mapped[int]
-    type: Mapped[str]
+    type: Mapped[int]
     amount: Mapped[float]
     currency: Mapped[str]
     transactor_id: Mapped[int] = mapped_column(ForeignKey("transactors.id"))

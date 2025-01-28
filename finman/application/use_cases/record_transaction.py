@@ -44,6 +44,6 @@ class RecordTransaction(UseCase[NewTransaction, int]):
     async def validate_category(self, category_name: str) -> str:
         categories = await self.transactions_repo.get_categories()
         for category in categories:
-            if category == category_name:
+            if category == category_name.strip().lower().title():
                 return category
         raise CategoryNotFoundError(category_name)
