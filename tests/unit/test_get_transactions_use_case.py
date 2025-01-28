@@ -4,7 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from finman.application.use_cases import GetTransactions
-from finman.domain.entities import TransactionResponse, TransactionsFilter
+from finman.domain.entities import RecordedTransaction, TransactionsFilter
 
 
 @pytest.fixture
@@ -53,7 +53,7 @@ async def test_get_transactions_with_filters(
         },
     ]
     transactions_repo.get_transactions.return_value = [
-        TransactionResponse(**t) for t in return_data
+        RecordedTransaction(**t) for t in return_data
     ]
 
     filters = TransactionsFilter(
@@ -70,7 +70,7 @@ async def test_get_transactions_with_filters(
     transactions_repo.get_transactions.assert_awaited_once_with(filters)
 
     assert len(result) == 2
-    assert all(isinstance(r, TransactionResponse) for r in result)
+    assert all(isinstance(r, RecordedTransaction) for r in result)
     assert result[0].id == 1
     assert result[1].id == 2
 

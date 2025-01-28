@@ -28,7 +28,7 @@ class NewTransaction(BaseModel):
     type: TransactionType
 
 
-class TransactionResponse(NewTransaction):
+class RecordedTransaction(NewTransaction):
     id: int
     created_at: datetime
     updated_at: datetime

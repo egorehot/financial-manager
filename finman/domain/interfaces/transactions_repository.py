@@ -3,7 +3,7 @@ from collections.abc import Sequence
 
 from finman.domain.entities import (
     NewTransaction,
-    TransactionResponse,
+    RecordedTransaction,
     TransactionsFilter,
 )
 
@@ -17,11 +17,11 @@ class TransactionsRepository(ABC):
     async def get_transactions(
             self,
             filters: TransactionsFilter,
-    ) -> Sequence[TransactionResponse]:
+    ) -> Sequence[RecordedTransaction]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, transaction_id: int) -> TransactionResponse:
+    async def get_by_id(self, transaction_id: int) -> RecordedTransaction:
         raise NotImplementedError
 
     @abstractmethod

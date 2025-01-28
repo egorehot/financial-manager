@@ -2,7 +2,7 @@ import logging
 
 from finman.application.base_use_case import UseCase
 from finman.application.uow import UoW
-from finman.domain.entities import TransactionResponse, TransactionsFilter
+from finman.domain.entities import RecordedTransaction, TransactionsFilter
 from finman.domain.interfaces import TransactionsRepository
 
 
@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 
 class GetTransactions(
-    UseCase[TransactionsFilter, list[TransactionResponse]],
+    UseCase[TransactionsFilter, list[RecordedTransaction]],
 ):
     def __init__(self, uow: UoW, transactions_repo: TransactionsRepository):
         self.uow = uow
@@ -18,7 +18,7 @@ class GetTransactions(
 
     async def __call__(
             self, data: TransactionsFilter,
-    ) -> list[TransactionResponse]:
+    ) -> list[RecordedTransaction]:
         """Receives filters for transactions,
         returns list of transactions if found"""
         log.info("Getting transaction,list with filters: %s", repr(data))
