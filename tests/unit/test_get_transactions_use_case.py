@@ -12,22 +12,19 @@ def get_transactions_uc(uow, transactions_repo):
     return GetTransactions(uow=uow, transactions_repo=transactions_repo)
 
 
-async def test_get_transactions_no_filters(
-        get_transactions_uc, transactions_repo,
-):
+async def test_get_transactions_no_filters(get_transactions_uc):
+    transactions_repo = get_transactions_uc.transactions_repo
     transactions_repo.get_transactions.return_value = []
 
     filters = TransactionsFilter()
-
     result = await get_transactions_uc(filters)
 
     transactions_repo.get_transactions.assert_awaited_once_with(filters)
-    assert result == [], "Expected an empty list of TransactionResponse"
+    assert result == []
 
 
-async def test_get_transactions_with_filters(
-        get_transactions_uc, transactions_repo,
-):
+async def test_get_transactions_with_filters(get_transactions_uc):
+    transactions_repo = get_transactions_uc.transactions_repo
     return_data = [
         {
             "id": 1,
@@ -75,15 +72,10 @@ async def test_get_transactions_with_filters(
     assert result[1].id == 2
 
 
-@pytest.mark.asyncio
-async def test_get_transactions_invalid_date_range(
-        get_transactions_uc, transactions_repo,
-):
+async def test_get_transactions_invalid_date_range():
     with pytest.raises(ValidationError):
         TransactionsFilter(
             date_from=datetime(2023, 2, 1),
             date_to=datetime(2023, 1, 1),
             types=[1],
         )
-
-    transactions_repo.get_transactions.assert_not_awaited()
