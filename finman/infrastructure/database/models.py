@@ -23,6 +23,7 @@ class Transaction(Base):
     amount: Mapped[float]
     currency: Mapped[str]
     transactor_id: Mapped[int] = mapped_column(ForeignKey("transactors.id"))
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
     description: Mapped[str | None]
 
     transactor: Mapped["Transactor"] = relationship(lazy="joined")

@@ -20,7 +20,7 @@ async def test_get_transactions_no_filters(get_transactions_uc):
     result = await get_transactions_uc(filters)
 
     transactions_repo.get_transactions.assert_awaited_once_with(filters)
-    assert result == []
+    assert len(result) == 0
 
 
 async def test_get_transactions_with_filters(get_transactions_uc):

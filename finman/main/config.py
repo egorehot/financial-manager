@@ -13,12 +13,12 @@ class _DatabaseSettings(BaseSettings):
     password: str | None = None
     host: str | None = None
     port: int | None = None
-    database: str | None = None
+    database: str = ":memory:"
 
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env",
         env_prefix="FINMAN_DB_",
-        env_nested_delimiter="__",
+        # env_nested_delimiter="__",
         case_sensitive=False,
     )
 
