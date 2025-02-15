@@ -35,11 +35,3 @@ class TransactionsRepository(ABC):
     @abstractmethod
     async def delete(self, transaction_id: int) -> None:
         raise NotImplementedError
-
-    @abstractmethod
-    async def get_transactors(self) -> Sequence[str]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_categories(self) -> Sequence[str]:
-        raise NotImplementedError

@@ -21,6 +21,7 @@ async def test_get_transactions_no_filters(get_transactions_uc):
 
     transactions_repo.get_transactions.assert_awaited_once_with(filters)
     assert len(result) == 0
+    get_transactions_uc.uow.rollback.assert_awaited_once()
 
 
 async def test_get_transactions_with_filters(get_transactions_uc):
@@ -70,6 +71,7 @@ async def test_get_transactions_with_filters(get_transactions_uc):
     assert all(isinstance(r, RecordedTransaction) for r in result)
     assert result[0].id == 1
     assert result[1].id == 2
+    get_transactions_uc.uow.rollback.assert_awaited_once()
 
 
 async def test_get_transactions_invalid_date_range():

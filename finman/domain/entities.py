@@ -11,7 +11,7 @@ from pydantic import (
 )
 from pydantic_extra_types.currency_code import Currency
 
-from finman.application.exceptions import IncorrectFilterDatesError
+from finman.domain.exceptions import IncorrectFilterDatesError
 
 
 class TransactionType(Enum):

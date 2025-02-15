@@ -22,6 +22,9 @@ class GetTransactions(
         """Receives filters for transactions,
         returns list of transactions if found"""
         log.info("Getting transaction,list with filters: %s", repr(data))
-        transactions = await self.transactions_repo.get_transactions(data)
-        log.info("Got %s transactions", len(transactions))
-        return list(transactions)
+        try:
+            transactions = await self.transactions_repo.get_transactions(data)
+            log.info("Got %s transactions", len(transactions))
+            return list(transactions)
+        finally:
+            await self.uow.rollback()

@@ -11,7 +11,10 @@ class GetTransactionById(UseCase[int, RecordedTransaction]):
         self.transactions_repo = transactions_repo
 
     async def __call__(self, data: int) -> RecordedTransaction:
-        transaction = await self.transactions_repo.get_by_id(data)
-        if not transaction:
-            raise TransactionNotFoundError(data)
-        return transaction
+        try:
+            transaction = await self.transactions_repo.get_by_id(data)
+            if transaction is None:
+                raise TransactionNotFoundError(data)
+            return transaction
+        finally:
+            await self.uow.rollback()
