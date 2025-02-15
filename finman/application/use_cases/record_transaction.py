@@ -26,9 +26,9 @@ class RecordTransaction(UseCase[NewTransaction, int]):
             data.category = await self.validate_category(data.category)
             transaction_id = await self.transactions_repo.save(data)
             await self.uow.commit()
-        except Exception as exc:
+        except Exception:
             await self.uow.rollback()
-            log.exception(exc)
+            log.exception("Failed to record transaction: %s", repr(data))
             raise
         else:
             return transaction_id
