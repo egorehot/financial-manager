@@ -1,9 +1,9 @@
+import pytest
 from alembic import command as alembic_cmd
 from alembic.config import Config
-import pytest
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from finman.main.config import DatabaseSettings, PROJECT_ROOT
+from finman.main.config import PROJECT_ROOT, DatabaseSettings
 
 
 @pytest.fixture(scope="session")
