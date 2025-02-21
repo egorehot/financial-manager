@@ -21,7 +21,9 @@ class TransactionsRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, transaction_id: int) -> RecordedTransaction:
+    async def get_by_id(
+            self, transaction_id: int,
+    ) -> RecordedTransaction | None:
         raise NotImplementedError
 
     @abstractmethod

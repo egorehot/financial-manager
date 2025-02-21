@@ -43,10 +43,34 @@ class SQLAlchemyTransactionsRepository(TransactionsRepository):
             self,
             filters: TransactionsFilter,
     ) -> Sequence[RecordedTransaction]:
-        pass  # TODO
+        query = select(Transaction).limit(filters.limit)
+        if filters.date_from is not None:
+            query = query.where(Transaction.date >= filters.date_from)
+        if filters.date_to is not None:
+            query = query.where(Transaction.date < filters.date_to)
+        if filters.types is not None:
+            query = query.where(Transaction.type.in_(filters.types))
+        if filters.transactors is not None:
+            transactor_ids = await self._get_transactor_ids_by_names(
+                filters.transactors,
+            )
+            query = query.where(Transaction.transactor_id.in_(transactor_ids))
+        if filters.categories is not None:
+            categories_ids = await self._get_category_ids_by_names(
+                filters.categories,
+            )
+            query = query.where(Transaction.category_id.in_(categories_ids))
+        result = await self.uow.execute(query)
+        transactions = result.scalars().all()
+        return [RecordedTransaction.model_validate(t) for t in transactions]
 
-    async def get_by_id(self, transaction_id: int) -> RecordedTransaction:
-        pass  # TODO
+    async def get_by_id(
+            self, transaction_id: int,
+    ) -> RecordedTransaction | None:
+        transaction = self.uow.get(Transaction, transaction_id)
+        if transaction is not None:
+            return RecordedTransaction.model_validate(transaction)
+        return None
 
     async def update(
             self,
@@ -73,3 +97,17 @@ class SQLAlchemyTransactionsRepository(TransactionsRepository):
         if transactor is None:
             raise TransactorNotFoundError(name)
         return transactor
+
+    async def _get_transactor_ids_by_names(
+            self, names: Sequence[str],
+    ) -> Sequence[int]:
+        query = select(Transactor.id).where(Transactor.name.in_(names))
+        ids = await self.uow.execute(query)
+        return ids.scalars().all()
+
+    async def _get_category_ids_by_names(
+            self, names: Sequence[str],
+    ) -> Sequence[int]:
+        query = select(Category.id).where(Category.name.in_(names))
+        ids = await self.uow.execute(query)
+        return ids.scalars().all()

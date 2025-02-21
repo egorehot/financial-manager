@@ -25,7 +25,7 @@ class NewTransaction(BaseModel):
     currency: Currency
     category: str
     transactor: str
-    type: TransactionType
+    type: TransactionType  # TODO
 
 
 class RecordedTransaction(NewTransaction):
