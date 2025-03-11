@@ -11,7 +11,7 @@ from finman.main.config import DatabaseSettings
 config = context.config
 
 
-if config.config_file_name is not None:
+if context.config.attributes.get("configure_logger", True):
     fileConfig(config.config_file_name)
 
 

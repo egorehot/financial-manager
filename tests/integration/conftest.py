@@ -22,6 +22,7 @@ def sessionmaker(async_engine):
 async def apply_migrations(async_engine):
     def run_upgrade(connection, cfg):
         cfg.attributes["connection"] = connection
+        cfg.attributes["configure_logger"] = False
         alembic_cmd.upgrade(cfg, "head")
 
     async with async_engine.begin() as conn:

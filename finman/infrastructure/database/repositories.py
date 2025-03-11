@@ -1,9 +1,12 @@
+import logging
 from collections.abc import Sequence
+from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from finman.domain.entities import (
+    DEFAULT_TZ,
     NewTransaction,
     RecordedTransaction,
     TransactionsFilter,
@@ -18,6 +21,9 @@ from finman.infrastructure.database.models import (
     Transaction,
     Transactor,
 )
+
+
+log = logging.getLogger(__name__)
 
 
 class SQLAlchemyTransactionsRepository(TransactionsRepository):
@@ -35,6 +41,7 @@ class SQLAlchemyTransactionsRepository(TransactionsRepository):
             category=category,
             transactor=transactor,
         )
+        log.info("Saving to database transaction %r", transaction_orm)
         self.uow.add(transaction_orm)
         await self.uow.flush()
         return transaction_orm.id
@@ -67,9 +74,27 @@ class SQLAlchemyTransactionsRepository(TransactionsRepository):
     async def get_by_id(
             self, transaction_id: int,
     ) -> RecordedTransaction | None:
-        transaction = self.uow.get(Transaction, transaction_id)
+        log.info(
+            "Getting transaction with id %s from database", transaction_id,
+        )
+        transaction = await self.uow.get(Transaction, transaction_id)
         if transaction is not None:
-            return RecordedTransaction.model_validate(transaction)
+            log.info("Got transaction %r", transaction)
+            return RecordedTransaction(
+                id=transaction.id,
+                date=datetime.fromtimestamp(transaction.date, tz=DEFAULT_TZ),
+                amount=transaction.amount,
+                currency=transaction.currency,  # type: ignore
+                category=transaction.category.name,
+                transactor=transaction.transactor.name,
+                created_at=datetime.fromtimestamp(
+                    transaction.created_at, tz=DEFAULT_TZ,
+                ),
+                updated_at=datetime.fromtimestamp(
+                    transaction.updated_at, tz=DEFAULT_TZ,
+                ),
+                type=transaction.type,  # type: ignore
+            )
         return None
 
     async def update(

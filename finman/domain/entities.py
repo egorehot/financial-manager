@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from typing import Self
+from zoneinfo import ZoneInfo
 
 from pydantic import (
     BaseModel,
@@ -12,6 +13,9 @@ from pydantic import (
 from pydantic_extra_types.currency_code import Currency
 
 from finman.domain.exceptions import IncorrectFilterDatesError
+
+
+DEFAULT_TZ = ZoneInfo("UTC")
 
 
 class TransactionType(Enum):

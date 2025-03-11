@@ -10,9 +10,12 @@ class Base(DeclarativeBase):
     created_at: Mapped[int] = mapped_column(server_default=func.now())
     updated_at: Mapped[int] = mapped_column(server_default=func.now())
 
-    def __repr__(self) -> str:  # TODO add all column attrs
-        return (f"<{self.__class__.__name__}: id={self.id}, "
-                f"created_at={self.created_at}, updated_at={self.updated_at}>")
+    def __repr__(self) -> str:
+        res = f"<{self.__class__.__name__}: "
+        for col_name, _ in self.__mapper__.columns.items():  # noqa: PERF102
+            val = getattr(self, col_name)
+            res += f"{col_name}={val!r} "
+        return res[:-1] + ">"
 
 
 class Transaction(Base):
