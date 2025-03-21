@@ -2,7 +2,7 @@ import logging
 from collections.abc import Sequence
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from finman.domain.entities import (
@@ -31,16 +31,7 @@ class SQLAlchemyTransactionsRepository(TransactionsRepository):
         self.uow = uow
 
     async def save(self, transaction: NewTransaction) -> int:
-        category = await self._get_category(transaction.category)
-        transactor = await self._get_transactor(transaction.transactor)
-        transaction_orm = Transaction(
-            date=int(transaction.date.timestamp()),
-            amount=transaction.amount,
-            currency=transaction.currency,
-            type=transaction.type.value,
-            category=category,
-            transactor=transactor,
-        )
+        transaction_orm = await self._create_orm_transaction(transaction)
         log.info("Saving to database transaction %r", transaction_orm)
         self.uow.add(transaction_orm)
         await self.uow.flush()
@@ -101,11 +92,28 @@ class SQLAlchemyTransactionsRepository(TransactionsRepository):
             self,
             transaction_id: int,
             transaction: NewTransaction,
-    ) -> None:
-        pass  # TODO
+    ) -> None:  # TODO implement real update functionality
+        await self.delete(transaction_id)
+        await self.save(transaction)
 
     async def delete(self, transaction_id: int) -> None:
-        pass  # TODO
+        log.info("Deleteing transaction with id %s", transaction_id)
+        query = delete(Transaction).where(Transaction.id == transaction_id)
+        await self.uow.execute(query)
+
+    async def _create_orm_transaction(
+            self, transaction: NewTransaction,
+    ) -> Transaction:
+        category = await self._get_category(transaction.category)
+        transactor = await self._get_transactor(transaction.transactor)
+        return Transaction(
+            date=int(transaction.date.timestamp()),
+            amount=transaction.amount,
+            currency=transaction.currency,
+            type=transaction.type.value,
+            category=category,
+            transactor=transactor,
+        )
 
     async def _get_category(self, name: str) -> Category:
         result = await self.uow.execute(select(Category).filter_by(name=name))

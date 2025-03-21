@@ -40,3 +40,26 @@ async def test_save_transaction(repository, aux_data):
 
     found_transaction = await repository.get_by_id(saved_id)
     assert found_transaction is not None
+
+
+async def test_update_transaction(repository, aux_data):
+    category, transactor = aux_data
+    new_transaction = NewTransaction.model_validate({
+            "date": datetime.fromtimestamp(1, tz=DEFAULT_TZ).isoformat(),
+            "amount": 1.,
+            "currency": "EUR",
+            "category": category,
+            "transactor": transactor,
+            "type": 1,
+    })
+    saved_id = await repository.save(new_transaction)
+
+    new_amount = 99.
+    updated_transaction = new_transaction.model_copy(
+        update={"amount": new_amount},
+        deep=True,
+    )
+    await repository.update(saved_id, updated_transaction)
+    found_transaction = await repository.get_by_id(saved_id)
+
+    assert found_transaction.amount == new_amount
