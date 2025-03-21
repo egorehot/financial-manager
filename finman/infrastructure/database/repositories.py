@@ -97,7 +97,7 @@ class SQLAlchemyTransactionsRepository(TransactionsRepository):
         await self.save(transaction)
 
     async def delete(self, transaction_id: int) -> None:
-        log.info("Deleteing transaction with id %s", transaction_id)
+        log.info("Deleting transaction with id %s", transaction_id)
         query = delete(Transaction).where(Transaction.id == transaction_id)
         await self.uow.execute(query)
 
