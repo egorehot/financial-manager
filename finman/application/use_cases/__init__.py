@@ -1,8 +1,8 @@
 __all__ = (
+    "DeleteTransaction",
     "GetTransactionById",
     "GetTransactions",
     "RecordTransaction",
-    "DeleteTransaction",
 )
 
 
