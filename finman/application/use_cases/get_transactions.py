@@ -21,7 +21,7 @@ class GetTransactions(
     ) -> list[RecordedTransaction]:
         """Receives filters for transactions,
         returns list of transactions if found"""
-        log.info("Getting transaction,list with filters: %s", repr(data))
+        log.info("Getting transaction,list with filters: %r", data)
         try:
             transactions = await self.transactions_repo.get_transactions(data)
             log.info("Got %s transactions", len(transactions))

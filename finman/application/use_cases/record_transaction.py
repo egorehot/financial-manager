@@ -16,13 +16,13 @@ class RecordTransaction(UseCase[NewTransaction, int]):
 
     async def __call__(self, data: NewTransaction) -> int:
         """Receives a transaction to save, returns its identifier"""
-        log.debug("Received new transaction: %s", repr(data))
+        log.debug("Received new transaction: %r", data)
         try:
             transaction_id = await self.transactions_repo.save(data)
             await self.uow.commit()
         except Exception:
             await self.uow.rollback()
-            log.exception("Failed to record transaction: %s", repr(data))
+            log.exception("Failed to record transaction: %r", data)
             raise
         else:
             return transaction_id
